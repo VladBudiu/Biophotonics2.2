@@ -1,80 +1,83 @@
-import sys
-import os
-try:
-    from pytissueoptics import *
-except ImportError as e:
-    print(f"Error importing pytissueoptics: {e}")
-    sys.exit(1)
+from pytissueoptics import *
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+class SkinModel(ScatteringScene):
+    """
+    Skin model consisting of three layers: Epidermis, Dermis, and Subcutis,
+    with optical properties defined for green light.
+    """
+    TISSUE = []
 
-TITLE = "Backscattered Energy for Reflectance PPG"
-DESCRIPTION = """Visualizing the amount of backscattered light energy (Blue, Green, IR) 
-leaving the skin surface."""
+    def __init__(self, worldMaterial=ScatteringMaterial()):
+        self._create()
+        super().__init__(self.TISSUE, worldMaterial, ignoreIntersections=True)
 
-def simulate_backscattered_energy(wavelength, material_properties):
-    print(f"Simulating backscattered energy for {wavelength} light...")
+    def _create(self):
+        # Optical properties for green light
+        n = [1.4, 1.4, 1.44]  # Refractive indices
+        mu_s = [15, 10, 5]    # Scattering coefficients (cm^-1)
+        mu_a = [0.1, 0.15, 0.2]  # Absorption coefficients (cm^-1)
+        g = 0.9  # Anisotropy factor (assumed constant)
 
-    # Define layer-specific properties
-    material_epidermis = ScatteringMaterial(**material_properties["epidermis"])
-    material_dermis = ScatteringMaterial(**material_properties["dermis"])
-    material_subcutis = ScatteringMaterial(**material_properties["subcutis"])
+        # Thicknesses of each layer (cm)
+        thickness = [0.05, 0.2, 0.1]  # Epidermis, Dermis, Subcutis
 
-    # Define layers with increased epidermis thickness
-    increased_thickness = 0.0
-    layer_epidermis = Cuboid(a=1.0, b=1.0, c=increased_thickness, position=Vector(0, 0, 0), material=material_epidermis, label="epidermis")
-    layer_dermis = Cuboid(a=1.0, b=1.0, c=0.2, position=Vector(0, 0, increased_thickness), material=material_dermis, label="dermis")
-    layer_subcutis = Cuboid(a=1.0, b=1.0, c=0.05, position=Vector(0, 0, increased_thickness + 0.2), material=material_subcutis, label="subcutis")
+        # Dimensions of the skin model (width x height)
+        width = 3
+        height = 3
 
-    # Stack layers to form the skin model
-    stacked_tissue = layer_epidermis.stack(layer_dermis, "back").stack(layer_subcutis, "back")
+        # Create layers
+        epidermis = Cuboid(width, height, thickness[0], material=ScatteringMaterial(mu_s[0], mu_a[0], g, n[0]), label="Epidermis")
+        dermis = Cuboid(width, height, thickness[1], material=ScatteringMaterial(mu_s[1], mu_a[1], g, n[1]), label="Dermis")
+        subcutis = Cuboid(width, height, thickness[2], material=ScatteringMaterial(mu_s[2], mu_a[2], g, n[2]), label="Subcutis")
 
-    # Create the scene with the stacked tissue
-    scene = ScatteringScene([stacked_tissue])
-    logger = EnergyLogger(scene)
+        # Align layers correctly and stack them
+        dermis.translateBy(Vector(0, 0, thickness[0]))
+        subcutis.translateBy(Vector(0, 0, thickness[0] + thickness[1]))
 
-    # Validate surface labels
-    print("Available surfaces in the epidermis layer:")
-    print(layer_epidermis._surfaces.surfaceLabels)  # Print actual surface labels
+        self.TISSUE = [epidermis, dermis, subcutis]
 
-    # Define a divergent photon source positioned above the tissue
-    source = DivergentSource(position=Vector(0, 0, -0.2), direction=Vector(0, 0, 1), N=1000000,  # Increased photons
-                             diameter=0.1, divergence=0.4, displaySize=0.2)
-
-    # Propagate photons through the tissue
-    source.propagate(scene, logger=logger)
-
-    # Use the correct surface label from the available list
-    surface_view = View2DSurfaceZ("epidermis", "epidermis_top", "leaving")
-    logger.addView(surface_view)
-
-    # Visualize the backscattered energy with normalized scaling
-    print(f"Visualizing backscattered energy for {wavelength} light...")
-    logger.showView(surface_view)
-
-def example_code():
-    # Material properties for different wavelengths
-    materials = {
-        "Blue": {
-            "epidermis": {"mu_s": 50.0, "mu_a": 0.3, "g": 0.9, "n": 1.4},
-            "dermis": {"mu_s": 60.0, "mu_a": 0.4, "g": 0.9, "n": 1.4},
-            "subcutis": {"mu_s": 40.0, "mu_a": 0.2, "g": 0.8, "n": 1.4},
-        },
-        "Green": {
-            "epidermis": {"mu_s": 30.0, "mu_a": 0.2, "g": 0.9, "n": 1.4},
-            "dermis": {"mu_s": 35.0, "mu_a": 0.25, "g": 0.85, "n": 1.4},
-            "subcutis": {"mu_s": 25.0, "mu_a": 0.15, "g": 0.8, "n": 1.4},
-        },
-        "IR": {
-            "epidermis": {"mu_s": 10.0, "mu_a": 0.05, "g": 0.9, "n": 1.4},
-            "dermis": {"mu_s": 12.0, "mu_a": 0.07, "g": 0.85, "n": 1.4},
-            "subcutis": {"mu_s": 8.0, "mu_a": 0.05, "g": 0.8, "n": 1.4},
-        },
+# Function to simulate and log backscattered light
+def simulate_backscattered_light(skin_model, light_color):
+    # Define optical properties for different light colors
+    optical_properties = {
+        "green": [15, 10, 5, 0.1, 0.15, 0.2],
+        "blue": [20, 15, 10, 0.2, 0.25, 0.3],
+        "IR": [8, 6, 4, 0.05, 0.07, 0.1]
     }
 
-    # Simulate and visualize for Blue, Green, and IR light
-    for wavelength, material_properties in materials.items():
-        simulate_backscattered_energy(wavelength, material_properties)
+    mu_s, mu_a = optical_properties[light_color][:3], optical_properties[light_color][3:]
 
+    # Update materials in the skin model for the selected light color
+    for i, layer in enumerate(skin_model.TISSUE):
+        layer._material.mu_s = mu_s[i]  # Corrected to _material
+        layer._material.mu_a = mu_a[i]  # Corrected to _material
+
+    # Set up the light source
+    source = DivergentSource(position=Vector(0, 0, -0.2), direction=Vector(0, 0, 1), N=10000, diameter=0.1, divergence=0.4)
+
+    # Logger to capture energy leaving the surface
+    logger = EnergyLogger(skin_model)
+
+    # Propagate light through the model
+    source.propagate(skin_model, logger=logger)
+
+    return source, logger
+
+# Function to visualize backscattered energy using the library's 1D visualization method
+def plot_backscattered_energy():
+    skin_model = SkinModel()
+
+    light_colors = ["green", "blue", "IR"]
+
+    for color in light_colors:
+        source, logger = simulate_backscattered_light(skin_model, color)
+
+        # Viewer for visualization
+        viewer = Viewer(skin_model, source, logger)
+        print(f"Visualizing 1D energy profile for {color.capitalize()} light...")
+        viewer.show1D(Direction.X_POS)
+
+# Example instantiation
 if __name__ == "__main__":
-    example_code()
+    print("Simulating backscattered light for different colors...")
+    plot_backscattered_energy()
