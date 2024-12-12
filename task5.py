@@ -40,10 +40,12 @@ class SkinModel(ScatteringScene):
 def simulate_backscattered_light(skin_model, light_color):
     # Define optical properties for different light colors
     optical_properties = {
-        "green": [15, 10, 5, 0.1, 0.15, 0.2],
-        "blue": [20, 15, 10, 0.2, 0.25, 0.3],
-        "IR": [8, 6, 4, 0.05, 0.07, 0.1]
-    }
+    "blue": [76.5, 76.5, 76.5, 6.85, 2.45, 1.45],
+    "green": [60.0, 60.0, 60.0, 3.90, 0.71, 0.49],
+    "red": [52.5, 52.5, 52.5, 2.50, 0.41, 0.26],
+    "IR": [40.5, 40.5, 40.5, 0.86, 0.16, 0.11]
+}
+
 
     mu_s, mu_a = optical_properties[light_color][:3], optical_properties[light_color][3:]
 
@@ -76,6 +78,8 @@ def plot_backscattered_energy():
         viewer = Viewer(skin_model, source, logger)
         print(f"Visualizing 1D energy profile for {color.capitalize()} light...")
         viewer.show1D(Direction.X_POS)
+        viewer.show2D(View2DSliceZ(position=0.15))
+
 
 # Example instantiation
 if __name__ == "__main__":

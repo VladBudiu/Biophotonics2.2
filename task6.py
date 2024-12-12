@@ -20,9 +20,9 @@ def final_skin_model_with_blood_and_visualization():
     print("Creating final skin model with blood optical properties and visualizing for Green light...")
 
     # Define material properties for Green light
-    material_epidermis = ScatteringMaterial(mu_s=30.0, mu_a=0.2, g=0.9, n=1.4)
-    material_dermis = ScatteringMaterial(mu_s=35.0, mu_a=0.25, g=0.85, n=1.4)
-    material_subcutis = ScatteringMaterial(mu_s=25.0, mu_a=0.15, g=0.8, n=1.4)
+    material_epidermis = ScatteringMaterial(mu_s=60.0, mu_a=3.9, g=0.75, n=1.4)
+    material_dermis = ScatteringMaterial(mu_s=60.0, mu_a=0.71, g=0.85, n=1.4)
+    material_subcutis = ScatteringMaterial(mu_s=60.0, mu_a=0.49, g=0.49, n=1.4)
     material_blood = ScatteringMaterial(**BLOOD_PROPERTIES)
 
     # Define layers with thicknesses in cm

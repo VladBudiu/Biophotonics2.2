@@ -13,9 +13,9 @@ def exampleCode():
     N = 100000 if hardwareAccelerationIsAvailable() else 1000
 
     # Define layer-specific properties for green light (wavelength ~ 520-550 nm)
-    material_epidermis = ScatteringMaterial(mu_s=10.0, mu_a=0.1, g=0.9, n=1.4)
-    material_dermis = ScatteringMaterial(mu_s=15.0, mu_a=0.2, g=0.8, n=1.4)
-    material_subcutis = ScatteringMaterial(mu_s=5.0, mu_a=0.05, g=0.7, n=1.4)
+    material_epidermis = ScatteringMaterial(mu_s=60.0, mu_a=3.9, g=0.75, n=1.4)
+    material_dermis = ScatteringMaterial(mu_s=60.0, mu_a=0.71, g=0.85, n=1.4)
+    material_subcutis = ScatteringMaterial(mu_s=60.0, mu_a=0.49, g=0.49, n=1.4)
 
     # Define layers with thicknesses in cm
     layer_epidermis = Cuboid(a=1.0, b=1.0, c=0.05, position=Vector(0, 0, 0), material=material_epidermis, label="Epidermis")

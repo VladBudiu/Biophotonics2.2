@@ -60,26 +60,31 @@ def energy_projections(wavelengths, material_properties):
 
         print(f"1D Energy profile for {wavelength} light...")
         viewer.show1D(Direction.X_POS, solidLabel=None, surfaceLabel=None)
-
+       
 if __name__ == "__main__":
     # Material properties for different wavelengths
     materials = {
         "Blue": {
-            "epidermis": {"mu_s": 50.0, "mu_a": 0.3, "g": 0.9, "n": 1.4},
-            "dermis": {"mu_s": 60.0, "mu_a": 0.4, "g": 0.9, "n": 1.4},
-            "subcutis": {"mu_s": 40.0, "mu_a": 0.2, "g": 0.8, "n": 1.4},
-        },
-        "Green": {
-            "epidermis": {"mu_s": 30.0, "mu_a": 0.2, "g": 0.9, "n": 1.4},
-            "dermis": {"mu_s": 35.0, "mu_a": 0.25, "g": 0.85, "n": 1.4},
-            "subcutis": {"mu_s": 25.0, "mu_a": 0.15, "g": 0.8, "n": 1.4},
-        },
-        "IR": {
-            "epidermis": {"mu_s": 10.0, "mu_a": 0.05, "g": 0.9, "n": 1.4},
-            "dermis": {"mu_s": 12.0, "mu_a": 0.07, "g": 0.85, "n": 1.4},
-            "subcutis": {"mu_s": 8.0, "mu_a": 0.05, "g": 0.8, "n": 1.4},
-        },
+    "epidermis": {"mu_s": 76.5, "mu_a": 6.85, "g": 0.75, "n": 1.4},
+    "dermis": {"mu_s": 76.5, "mu_a": 2.45, "g": 0.85, "n": 1.4},
+    "subcutis": {"mu_s": 76.5, "mu_a": 1.45, "g": 0.75, "n": 1.4},
+},
+"Green": {
+    "epidermis": {"mu_s": 60.0, "mu_a": 3.90, "g": 0.75, "n": 1.4},
+    "dermis": {"mu_s": 60.0, "mu_a": 0.71, "g": 0.85, "n": 1.4},
+    "subcutis": {"mu_s": 60.0, "mu_a": 0.49, "g": 0.75, "n": 1.4},
+},
+"Red": {
+    "epidermis": {"mu_s": 52.5, "mu_a": 2.50, "g": 0.75, "n": 1.4},
+    "dermis": {"mu_s": 52.5, "mu_a": 0.41, "g": 0.85, "n": 1.4},
+    "subcutis": {"mu_s": 52.5, "mu_a": 0.26, "g": 0.75, "n": 1.4},
+},
+"NIR": {
+    "epidermis": {"mu_s": 40.5, "mu_a": 0.86, "g": 0.75, "n": 1.4},
+    "dermis": {"mu_s": 40.5, "mu_a": 0.16, "g": 0.85, "n": 1.4},
+    "subcutis": {"mu_s": 40.5, "mu_a": 0.11, "g": 0.75, "n": 1.4},
+},
     }
 
     # Simulate for selected wavelengths
-    energy_projections(["Blue", "Green", "IR"], materials)
+    energy_projections(["Blue", "Green", "NIR"], materials)

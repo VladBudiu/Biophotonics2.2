@@ -51,22 +51,15 @@ class SkinModelWithBlood(SkinModelWithoutBlood):
         self.TISSUE.insert(2, blood_layer)  # Add between dermis and subcutis
 
 def simulate_backscattered_light(model: ScatteringScene, light_color: str):
-    """
-    Simulates the backscattered light for the given skin model and light color.
-
-    Args:
-        model (ScatteringScene): The skin model to simulate.
-        light_color (str): The color of the light (e.g., "green").
-
-    Returns:
-        tuple: A tuple containing the light source and the energy logger.
-    """
+    
     # Optical properties for different light colors
     optical_properties = {
-        "green": [15, 10, 5, 0.1, 0.15, 0.2],
-        "blue": [20, 15, 10, 0.2, 0.25, 0.3],
-        "IR": [8, 6, 4, 0.05, 0.07, 0.1]
-    }
+    "blue": [76.5, 76.5, 76.5, 6.85, 2.45, 1.45],
+    "green": [60.0, 60.0, 60.0, 3.90, 0.71, 0.49],
+    "red": [52.5, 52.5, 52.5, 2.50, 0.41, 0.26],
+    "IR": [40.5, 40.5, 40.5, 0.86, 0.16, 0.11]
+}
+
 
     # Extend optical properties dynamically to match the number of layers in the model
     num_layers = len(model.TISSUE)
